@@ -28,6 +28,7 @@ services:
         published: ${DD_TLS_PORT:-8443}
         protocol: tcp
         mode: host
+    restart: always
   uwsgi:
     build:
       context: ./
@@ -51,6 +52,7 @@ services:
           source: ./docker/extra_settings
           target: /app/docker/extra_settings
         - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"
+    restart: always
   celerybeat:
     image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
     depends_on:
@@ -67,6 +69,7 @@ services:
         - type: bind
           source: ./docker/extra_settings
           target: /app/docker/extra_settings
+    restart: always
   celeryworker:
     image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
     depends_on:
@@ -84,6 +87,7 @@ services:
           source: ./docker/extra_settings
           target: /app/docker/extra_settings
         - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"
+    restart: always
   initializer:
     image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
     depends_on:
@@ -95,7 +99,7 @@ services:
       DD_ADMIN_PASSWORD: "${DD_ADMIN_PASSWORD:-admin}"
       DD_ADMIN_MAIL: "${DD_ADMIN_USER:-admin@defectdojo.local}"
       DD_ADMIN_FIRST_NAME: "${DD_ADMIN_FIRST_NAME:-Admin}"
-      DD_ADMIN_LAST_NAME: "${DD_ADMIN_LAST_NAME:-User}"
+      DD_ADMIN_LAST_NAME: "${DD_ADMIN_LAST_NAME:-User}i"
       DD_INITIALIZE: "${DD_INITIALIZE:-true}"
       DD_SECRET_KEY: "${DD_SECRET_KEY:-hhZCp@D28z!n@NED*yB!ROMt+WzsY*iq}"
       DD_CREDENTIAL_AES_256_KEY: "${DD_CREDENTIAL_AES_256_KEY:-&91a*agLqesc*0DJ+2*bAbsUZfR*4nLw}"
@@ -114,10 +118,12 @@ services:
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     volumes:
        - defectdojo_data:/var/lib/mysql
+    restart: always
   rabbitmq:
     image: rabbitmq:3.9.11@sha256:20d5aeaad748b0a639b08fe54a8d4d311abe14d4ff1aa0d2ecfb6fbdf76cb155
     volumes:
        - defectdojo_rabbitmq:/var/lib/rabbitmq
+    restart: always
 volumes:
   defectdojo_data: {}
   defectdojo_media: {}
